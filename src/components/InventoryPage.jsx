@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function InventoryPage({
@@ -12,11 +12,29 @@ function InventoryPage({
   setLookupBarcode
 }) {
   const navigate = useNavigate();
+  const barcodeInputRef = useRef(null);
+
+  useEffect(() => {
+    if (barcodeInputRef.current) {
+      barcodeInputRef.current.focus();
+    }
+  }, [mode]);
+
   return (
     <>
+      {mode === 'in' ? (
+        <div className="alert alert-success text-center fw-bold" role="alert">
+          Booking In Mode
+        </div>
+      ) : (
+        <div className="alert alert-danger text-center fw-bold" role="alert">
+          Booking Out Mode
+        </div>
+      )}
+
       <div className="mb-3">
-        <button className={`btn btn-success me-2${mode === 'in' ? ' active' : ''}`} onClick={() => setMode('in')}>Book In</button>
-        <button className={`btn btn-danger${mode === 'out' ? ' active' : ''}`} onClick={() => setMode('out')}>Book Out</button>
+        <button className={`btn btn-success me-2${mode === 'in' ? ' active' : ''}`} onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book In</button>
+        <button className={`btn btn-danger${mode === 'out' ? ' active' : ''}`} onClick={() => { setMode('out'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book Out</button>
       </div>
       <form onSubmit={handleBarcodeSubmit} className="mb-4 row g-2 align-items-center">
         <div className="col-auto">
@@ -29,6 +47,7 @@ function InventoryPage({
             onChange={e => setBarcodeInput(e.target.value)}
             className="form-control"
             autoFocus
+            ref={barcodeInputRef}
           />
         </div>
         <div className="col-auto">
