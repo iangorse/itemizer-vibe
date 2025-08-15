@@ -73,7 +73,12 @@ function InventoryPage({
           .sort((a, b) => a.daysRemaining - b.daysRemaining)
           .map(({ item, idx, info, daysRemaining }) => (
             <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-              <span>{info?.name || item.barcode}</span>
+              <div>
+                <span>{info?.name || item.barcode}</span>
+                <span className="ms-2 text-muted" style={{ fontSize: '0.9em' }}>
+                  Booked In: {new Date(item.bookedIn).toLocaleString()}
+                </span>
+              </div>
               <span className="badge bg-warning text-dark">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
             </li>
           ))}
