@@ -54,10 +54,21 @@ function InstructionsPage() {
         </section>
 
         <section style={{ background: '#f8f9fa', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '0.6rem' }}>Inventory List & Lookup Integration</h3>
+          <ul style={{ paddingLeft: 18, marginBottom: 0 }}>
+            <li>If expiry info is missing for an item, a <b>Lookup</b> button appears instead of "Days Remaining".</li>
+            <li>Click <b>Lookup</b> to fetch product info from Open Food Facts and view a popup dialog.</li>
+            <li>The popup dialog shows product name, brand, barcode, and <b>ingredients</b> (if available).</li>
+            <li>You can auto-fill the lookup form from the dialog.</li>
+            <li>The dialog appears even if the inventory summary is closed.</li>
+          </ul>
+        </section>
+
+        <section style={{ background: '#f8f9fa', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
           <h3 style={{ fontSize: '1.1rem', marginBottom: '0.6rem' }}>Other Features</h3>
           <ul style={{ paddingLeft: 18, marginBottom: 0 }}>
             <li>Edit or remove items from inventory and product lookup at any time.</li>
-            <li>View a summary of all products, counts, and quick actions.</li>
+            <li>View a summary of all products, counts, and quick actions. <b>The Add button is now removed; add via the popup dialog instead.</b></li>
             <li>All data is stored locally in your browser—no cloud or server required.</li>
           </ul>
         </section>
