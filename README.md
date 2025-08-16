@@ -3,6 +3,7 @@
 # Itemizer-Vibe
 
 Itemizer-Vibe is a modern inventory management web application designed for fast barcode-based booking in and out of items. It is optimized for mobile and desktop, supports product lookup, expiry tracking, and uses IndexedDB for persistent storage. The UI is built with React and Tailwind CSS for a beautiful, responsive experience.
+> **Note:** The application must be run using **HTTPS**; camera access will not work on HTTP due to browser security restrictions.
 
 ## Features
 - **Barcode Booking:** Quickly book items in and out by scanning or entering barcodes.
