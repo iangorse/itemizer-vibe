@@ -140,7 +140,14 @@ function InventoryPage({
                       Booked In: {new Date(item.bookedIn).toLocaleString()}
                     </span>
                   </div>
-                  <span className="badge bg-warning text-dark">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
+                  <div className="d-flex align-items-center">
+                    <span className="badge bg-warning text-dark me-2">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
+                    <button className="btn btn-outline-danger btn-sm" title="Remove item" onClick={() => {
+                      setInventory(prev => prev.filter((_, i) => i !== idx));
+                    }}>
+                      Remove
+                    </button>
+                  </div>
                 </li>
               ))}
           </ul>
