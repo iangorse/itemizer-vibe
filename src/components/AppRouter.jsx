@@ -4,15 +4,32 @@ import Navbar from './Navbar';
 import InventoryPage from './InventoryPage';
 import ProductLookupPage from './ProductLookupPage';
 
+function getLocal(key, fallback) {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function AppRouter() {
-  const [inventory, setInventory] = useState([]);
+  const [inventory, setInventory] = useState(() => getLocal('inventory', []));
   const [mode, setMode] = useState('in');
   const [barcodeInput, setBarcodeInput] = useState('');
-  const [productLookup, setProductLookup] = useState({});
+  const [productLookup, setProductLookup] = useState(() => getLocal('productLookup', {}));
   const [lookupBarcode, setLookupBarcode] = useState('');
   const [lookupName, setLookupName] = useState('');
   const [lookupExpiry, setLookupExpiry] = useState('');
   const barcodeInputRef = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem('inventory', JSON.stringify(inventory));
+  }, [inventory]);
+
+  useEffect(() => {
+    localStorage.setItem('productLookup', JSON.stringify(productLookup));
+  }, [productLookup]);
 
   useEffect(() => {
     if (barcodeInputRef.current) {

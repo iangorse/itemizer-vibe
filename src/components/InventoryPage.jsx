@@ -1,6 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const CONTROL_CODES = {
+  BOOK_IN: 'Book In',
+  BOOK_OUT: 'Book Out',
+};
+
 function InventoryPage({
   inventory,
   productLookup,
@@ -8,7 +13,6 @@ function InventoryPage({
   setMode,
   barcodeInput,
   setBarcodeInput,
-  handleBarcodeSubmit,
   setLookupBarcode
 }) {
   const navigate = useNavigate();
@@ -19,6 +23,39 @@ function InventoryPage({
       barcodeInputRef.current.focus();
     }
   }, [mode]);
+
+  const handleBarcodeInput = (e) => {
+    setBarcodeInput(e.target.value);
+  };
+
+  const handleBarcodeSubmit = (e) => {
+    e.preventDefault();
+    const barcode = barcodeInput.trim();
+    if (!barcode) return;
+    if (barcode === CONTROL_CODES.BOOK_IN) {
+      setMode('in');
+      setBarcodeInput('');
+      if (barcodeInputRef.current) barcodeInputRef.current.focus();
+      return;
+    }
+    if (barcode === CONTROL_CODES.BOOK_OUT) {
+      setMode('out');
+      setBarcodeInput('');
+      if (barcodeInputRef.current) barcodeInputRef.current.focus();
+      return;
+    }
+
+    // Normal barcode handling
+    if (mode === 'in') {
+      // ...existing code for booking in...
+      setBarcodeInput('');
+      if (barcodeInputRef.current) barcodeInputRef.current.focus();
+    } else {
+      // ...existing code for booking out...
+      setBarcodeInput('');
+      if (barcodeInputRef.current) barcodeInputRef.current.focus();
+    }
+  };
 
   return (
     <>
@@ -44,7 +81,7 @@ function InventoryPage({
           <input
             type="text"
             value={barcodeInput}
-            onChange={e => setBarcodeInput(e.target.value)}
+            onChange={handleBarcodeInput}
             className="form-control"
             autoFocus
             ref={barcodeInputRef}
