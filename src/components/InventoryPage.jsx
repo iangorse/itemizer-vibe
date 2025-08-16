@@ -262,14 +262,14 @@ function InventoryPage({
                   <td>
                     {!productLookup[barcode] && (
                       <div className="d-flex flex-column gap-1">
-                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
-                          {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
+                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 2px', fontSize: '0.88em', whiteSpace: 'nowrap' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
+                          {loadingBarcode === barcode ? 'Looking up...' : 'Lookup'}
                         </button>
-                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
+                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 2px', fontSize: '0.88em', whiteSpace: 'nowrap' }} onClick={() => {
                           setLookupBarcode(barcode);
                           navigate('/lookup');
                         }}>
-                          Add to Product Lookup
+                          Add to Lookup
                         </button>
                         {lookupResult.barcode === barcode && (
                           <div className="mt-1 w-100" style={{ fontSize: '0.95em' }}>
