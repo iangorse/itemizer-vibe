@@ -6,6 +6,7 @@ import path from 'path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/itemizer-vibe",
 server: {
     https: {
       key: fs.readFileSync(path.resolve(__dirname, 'c:\\cert\\key.pem')),

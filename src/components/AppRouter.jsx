@@ -81,7 +81,7 @@ function AppRouter() {
   };
 
   return (
-    <Router>
+    <Router basename="/itemizer-vibe">
       <Navbar />
       <div className="container py-4">
         <Routes>
