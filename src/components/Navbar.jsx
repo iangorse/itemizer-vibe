@@ -24,7 +24,10 @@ function Navbar() {
   return (
     <nav className="navbar navbar-dark bg-primary" style={{ marginBottom: 0, minHeight: '44px', padding: '0.2rem 0' }}>
       <div className="container-fluid" style={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-  <Link to="/" className="navbar-brand mb-0 h1" style={{ fontSize: '1.1rem', padding: 0, cursor: 'pointer', textDecoration: 'none', color: '#fff' }}>Itemizer-Vibe</Link>
+        <Link to="/" className="navbar-brand mb-0 h1" style={{ fontSize: '1.1rem', padding: 0, cursor: 'pointer', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+          <img src="/itemizer-vibe.png" alt="Itemizer-Vibe Logo" style={{ height: '28px', width: '28px', marginRight: '0.3em', borderRadius: '6px' }} />
+          Itemizer-Vibe
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
