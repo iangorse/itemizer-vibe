@@ -6,30 +6,34 @@ function BarcodeScanner({ onScan, onClose }) {
   const divId = 'barcode-scanner-div';
   const [error, setError] = useState('');
 
+  const runningRef = useRef(false);
   useEffect(() => {
     const html5QrCode = new Html5Qrcode(divId);
-    html5QrCode
-      .start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 300, height: 300 },
-        },
-        (decodedText) => {
-          onScan(decodedText);
-          html5QrCode.stop().then(onClose);
-        },
-        (errorMessage) => {
-          // Ignore scan errors
-        }
-      )
-      .catch((err) => {
-        setError('Unable to access camera. Please check permissions and try again.');
-      });
+    html5QrCode.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: 250 },
+      (decodedText) => {
+        onScan(decodedText);
+        runningRef.current = false;
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+        });
+      },
+      (errorMessage) => {
+        // Ignore scan errors
+      }
+    ).then(() => {
+      runningRef.current = true;
+    }).catch((err) => {
+      setError('Unable to access camera. Please check permissions and try again.');
+    });
     scannerRef.current = html5QrCode;
     return () => {
-      html5QrCode.stop().catch(() => {});
-      html5QrCode.clear();
+      if (runningRef.current) {
+        html5QrCode.stop().catch(() => {});
+        html5QrCode.clear();
+        runningRef.current = false;
+      }
     };
   }, [onScan, onClose]);
 
@@ -48,8 +52,12 @@ function BarcodeScanner({ onScan, onClose }) {
       <button
         className="btn btn-secondary mt-3"
         onClick={() => {
-          if (scannerRef.current) {
-            scannerRef.current.stop().then(onClose);
+          if (scannerRef.current && runningRef.current) {
+            scannerRef.current.stop().then(() => {
+              scannerRef.current.clear();
+              runningRef.current = false;
+              onClose();
+            });
           } else {
             onClose();
           }

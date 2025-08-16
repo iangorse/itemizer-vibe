@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from './BarcodeScanner';
-import ZxingBarcodeScanner from './ZxingBarcodeScanner';
 
 const CONTROL_CODES = {
   BOOK_IN: 'Book In',
@@ -140,7 +139,7 @@ function InventoryPage({
                 <button type="button" className="btn-close" onClick={() => setShowScanner(false)}></button>
               </div>
               <div className="modal-body">
-                <ZxingBarcodeScanner onScan={handleScanBarcode} onClose={() => setShowScanner(false)} />
+                <BarcodeScanner onScan={handleScanBarcode} onClose={() => setShowScanner(false)} />
               </div>
             </div>
           </div>
