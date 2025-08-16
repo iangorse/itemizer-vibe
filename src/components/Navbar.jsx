@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const handleToggle = () => setMenuOpen(open => !open);
   const handleClose = () => setMenuOpen(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <nav className="navbar navbar-dark bg-primary" style={{ marginBottom: 0, minHeight: '44px', padding: '0.2rem 0' }}>
@@ -30,6 +41,7 @@ function Navbar() {
       </div>
       {menuOpen && (
         <div
+          ref={menuRef}
           style={{
             position: 'absolute',
             top: '44px',
@@ -73,6 +85,6 @@ function Navbar() {
       )}
     </nav>
   );
-}
+// ...existing code...
 
 export default Navbar;
