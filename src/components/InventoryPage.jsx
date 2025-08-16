@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BarcodeScanner from './BarcodeScanner';
+import ZxingBarcodeScanner from './ZxingBarcodeScanner';
 
 const CONTROL_CODES = {
   BOOK_IN: 'Book In',
@@ -20,6 +22,7 @@ function InventoryPage({
   const barcodeInputRef = useRef(null);
   const [lookupResult, setLookupResult] = useState({});
   const [loadingBarcode, setLoadingBarcode] = useState(null);
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     if (barcodeInputRef.current) {
@@ -79,6 +82,14 @@ function InventoryPage({
     setLoadingBarcode(null);
   };
 
+  const handleScanBarcode = (barcode) => {
+    setBarcodeInput(barcode);
+    setShowScanner(false);
+    setTimeout(() => {
+      document.getElementById('barcode-form')?.dispatchEvent(new Event('submit', { bubbles: true }));
+    }, 100);
+  };
+
   return (
     <>
       {mode === 'in' ? (
@@ -95,7 +106,7 @@ function InventoryPage({
         <button className={`btn btn-success me-2${mode === 'in' ? ' active' : ''}`} onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book In</button>
         <button className={`btn btn-danger${mode === 'out' ? ' active' : ''}`} onClick={() => { setMode('out'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book Out</button>
       </div>
-      <form onSubmit={handleBarcodeSubmit} className="mb-4 row justify-content-center g-2 align-items-center">
+      <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4 row justify-content-center g-2 align-items-center">
         <div className="col-auto">
           <label className="form-label mb-0">Scan or Enter Barcode:</label>
         </div>
@@ -114,7 +125,27 @@ function InventoryPage({
             {mode === 'in' ? 'Book In' : 'Book Out'}
           </button>
         </div>
+        <div className="col-auto">
+          <button type="button" className="btn btn-outline-secondary" onClick={() => setShowScanner(true)}>
+            Scan Barcode
+          </button>
+        </div>
       </form>
+      {showScanner && (
+        <div className="modal d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Scan Barcode</h5>
+                <button type="button" className="btn-close" onClick={() => setShowScanner(false)}></button>
+              </div>
+              <div className="modal-body">
+                <ZxingBarcodeScanner onScan={handleScanBarcode} onClose={() => setShowScanner(false)} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="row">
         <div className="col-md-6">
