@@ -1,4 +1,4 @@
-# ⚡️ This entire application was vibe coded.
+# ⚡️ This entire application was vibe coded as an experiment to see how it works. There may be errors or quirks due to this approach.
 
 # Itemizer-Vibe
 
