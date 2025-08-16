@@ -28,45 +28,49 @@ function Navbar() {
           </span>
         </button>
       </div>
-      <div
-        className="navbar-nav"
-        style={{
-          position: 'absolute',
-          top: '44px',
-          left: 0,
-          width: '100%',
-          background: '#0d6efd',
-          zIndex: 1000,
-          display: menuOpen ? 'flex' : 'none',
-          flexDirection: 'column',
-          gap: '0.5rem',
-          padding: '0.5rem 1rem',
-          boxShadow: menuOpen ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
-        }}
-        onClick={handleClose}
-      >
-        <Link
-          to="/"
-          className={`nav-link${location.pathname === '/' ? ' active' : ''}`}
-          style={{ fontSize: '1rem', padding: '0.5rem 0.5rem', color: '#fff' }}
+      {menuOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '44px',
+            right: '8px',
+            minWidth: '180px',
+            background: '#fff',
+            borderRadius: '10px',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+            zIndex: 1000,
+            padding: '0.5rem 0',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+          }}
         >
-          Booking
-        </Link>
-        <Link
-          to="/lookup"
-          className={`nav-link${location.pathname === '/lookup' ? ' active' : ''}`}
-          style={{ fontSize: '1rem', padding: '0.5rem 0.5rem', color: '#fff' }}
-        >
-          Product Lookup
-        </Link>
-        <Link
-          to="/instructions"
-          className={`nav-link${location.pathname === '/instructions' ? ' active' : ''}`}
-          style={{ fontSize: '1rem', padding: '0.5rem 0.5rem', color: '#fff' }}
-        >
-          Instructions
-        </Link>
-      </div>
+          <Link
+            to="/"
+            className={`nav-link${location.pathname === '/' ? ' active' : ''}`}
+            style={{ fontSize: '1rem', padding: '0.7rem 1.2rem', color: '#222', textDecoration: 'none', borderBottom: '1px solid #eee' }}
+            onClick={handleClose}
+          >
+            Booking
+          </Link>
+          <Link
+            to="/lookup"
+            className={`nav-link${location.pathname === '/lookup' ? ' active' : ''}`}
+            style={{ fontSize: '1rem', padding: '0.7rem 1.2rem', color: '#222', textDecoration: 'none', borderBottom: '1px solid #eee' }}
+            onClick={handleClose}
+          >
+            Product Lookup
+          </Link>
+          <Link
+            to="/instructions"
+            className={`nav-link${location.pathname === '/instructions' ? ' active' : ''}`}
+            style={{ fontSize: '1rem', padding: '0.7rem 1.2rem', color: '#222', textDecoration: 'none' }}
+            onClick={handleClose}
+          >
+            Instructions
+          </Link>
+        </div>
+      )}
     </nav>
   );
 }
