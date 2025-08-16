@@ -4,10 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from './BarcodeScanner';
 import { addInventoryItem, removeInventoryItem, getInventory } from '../utils/db';
 
-const CONTROL_CODES = {
-  BOOK_IN: 'Book In',
-  BOOK_OUT: 'Book Out',
-};
+
 
 function InventoryPage({
   inventory,
@@ -42,18 +39,7 @@ function InventoryPage({
     setErrorMsg('');
     const barcode = barcodeInput.trim();
     if (!barcode) return;
-    if (barcode === CONTROL_CODES.BOOK_IN) {
-      setMode('in');
-      setBarcodeInput('');
-      if (barcodeInputRef.current) barcodeInputRef.current.focus();
-      return;
-    }
-    if (barcode === CONTROL_CODES.BOOK_OUT) {
-      setMode('out');
-      setBarcodeInput('');
-      if (barcodeInputRef.current) barcodeInputRef.current.focus();
-      return;
-    }
+  // Removed control codes functionality
     if (mode === 'in') {
       await addInventoryItem({ barcode, bookedIn: new Date() });
       const items = await getInventory();
