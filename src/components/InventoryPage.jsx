@@ -109,7 +109,7 @@ function InventoryPage({
 
   return (
   <div className="container-fluid px-0 py-2" style={{ maxWidth: 480, marginLeft: '0', marginRight: '0' }}>
-      <div style={{ margin: 0, borderRadius: 0, position: 'relative', top: 0, zIndex: 1020 }}>
+  <div style={{ margin: 0, borderRadius: 0, position: 'relative', top: 0, zIndex: 900 }}>
         {mode === 'in' ? (
           <div
             className="alert alert-primary text-center fw-bold py-3 mb-0"
