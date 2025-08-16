@@ -1,62 +1,70 @@
+# ⚡️ This entire application was vibe coded.
+
 # Itemizer-Vibe
 
-## Description
-
-Itemizer-Vibe is a barcode-based inventory management application built with React and Vite. It allows you to book items in and out of inventory by scanning their barcodes using your device's camera or by manual entry. The app supports FIFO booking out, product lookup with expiry tracking, persistent storage, and a mobile-friendly interface.
+Itemizer-Vibe is a modern inventory management web application designed for fast barcode-based booking in and out of items. It is optimized for mobile and desktop, supports product lookup, expiry tracking, and uses IndexedDB for persistent storage. The UI is built with React and Tailwind CSS for a beautiful, responsive experience.
 
 ## Features
-- Book items in and out by scanning or entering barcodes
-- FIFO booking out (first-in, first-out)
-- Product lookup: assign names and expiry dates to barcodes
-- Lookup unknown barcodes via Open Food Facts API
-- Inventory summary and item count
-- Manual item removal and editing
-- Mobile camera barcode scanning (ZXing and html5-qrcode supported)
-- Control codes to switch between booking in/out
-- Confirmation dialogs for destructive actions
-- Responsive, mobile-optimized UI
-- Data stored in browser localStorage
+- **Barcode Booking:** Quickly book items in and out by scanning or entering barcodes.
+- **Inventory List:** View all booked-in items, sorted by expiry or FIFO.
+- **Product Lookup:** Assign names and expiry dates to barcodes, with auto-fill from Open Food Facts.
+- **Expiry Tracking:** See days remaining for each item.
+- **Mobile Camera Support:** Scan barcodes using your device camera.
+- **Persistent Storage:** All data is saved locally in your browser (IndexedDB).
+- **Manual Edit/Remove:** Edit product info or remove items from inventory.
+- **Modern UI:** Responsive, mobile-first design using Tailwind CSS.
 
 ## How to Use
 
-1. **Booking In/Out**
-	- Use the main page to scan or enter a barcode.
-	- Select "Booking In" or "Booking Out" mode (tap the mode banner to switch).
-	- Scan a barcode with your camera (tap the scan button) or enter manually.
-	- Booking In adds the item to inventory; Booking Out removes the oldest matching item.
-	- If you try to book out an item that does not exist, an error message and sound will play.
+### 1. Booking In Items
+- Go to the main page.
+- Scan a barcode using your camera or enter it manually.
+- The item is added to your inventory.
 
-2. **Product Lookup**
-	- Go to the Product Lookup page to assign a name and expiry date to a barcode.
-	- Fill in the barcode, name, and expiry date, then submit.
-	- After assigning, you will be redirected to the main page.
-	- You can edit or delete lookup entries from the list.
+### 2. Booking Out Items
+- Scan or enter the barcode of the item to book it out.
+- The oldest matching item (FIFO) is removed from inventory.
 
-3. **Inventory Summary**
-	- View all items currently booked in, with names, barcodes, and days remaining until expiry.
-	- Remove items manually if needed.
+### 3. Product Lookup
+- Go to the Product Lookup page.
+- Enter a barcode, name, and expiry date to assign info to a product.
+- Use the lookup button to auto-fill product info from Open Food Facts.
 
-4. **Barcode Scanning**
-	- Tap the scan button to open the camera scanner.
-	- Grant camera permissions if prompted.
-	- Hold the barcode steady in front of the camera; scanning is automatic.
+### 4. Inventory Summary
+- Click "Show Inventory Summary" to see a table of all products, counts, and quick actions for lookup and editing.
 
-5. **Control Codes**
-	- Enter "Book In" or "Book Out" in the barcode field to switch modes quickly.
+### 5. Mobile Camera Scanning
+- Tap the scan button to use your device camera for barcode input.
+- Grant camera permissions if prompted.
 
-## Setup & Development
+### 6. Editing & Removing
+- Use the edit and delete buttons in Product Lookup and Inventory to update or remove items.
 
-1. Install dependencies:
+## Installation & Setup
+
+1. **Install dependencies:**
 	```sh
 	npm install
 	```
-2. Start the development server:
+2. **Start the development server:**
 	```sh
 	npm run dev
 	```
-3. Open your browser to the local server URL (default: http://localhost:5173)
+3. **Open in browser:**
+	Visit [http://localhost:5173](http://localhost:5173) (or the port shown in your terminal).
+
+## Technologies Used
+- React
+- Vite
+- Tailwind CSS
+- IndexedDB (via idb)
+- Open Food Facts API
 
 ## Notes
-- All data is stored locally in your browser and will persist between sessions.
+- All data is stored locally in your browser. No cloud or server required.
+- Works best in Chrome, Firefox, or Safari with camera access enabled.
+
+## License
+MIT
 - For best results, use Chrome, Firefox, or Safari and allow camera access.
 - Mobile browsers are fully supported.
