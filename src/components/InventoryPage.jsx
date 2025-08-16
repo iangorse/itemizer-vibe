@@ -190,9 +190,13 @@ function InventoryPage({
                   <div style={{ wordBreak: 'break-word', fontWeight: 500 }}>{info?.name || item.barcode}</div>
                   <div className="text-muted" style={{ fontSize: '0.95em', wordBreak: 'break-word' }}>Booked In: {new Date(item.bookedIn).toLocaleString()}</div>
                   <div className="d-flex gap-2 mt-2 w-100">
-                    <span className="badge bg-warning text-dark flex-fill">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
+                    <span className="badge bg-warning text-dark flex-fill d-flex align-items-center justify-content-center" style={{ height: '2.1em', fontSize: '1em' }}>
+                      Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}
+                    </span>
                     <button className="btn btn-outline-danger btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} title="Remove item" onClick={() => {
-                      setInventory(prev => prev.filter((_, i) => i !== idx));
+                      if (window.confirm('Are you sure you want to remove this item from inventory?')) {
+                        setInventory(prev => prev.filter((_, i) => i !== idx));
+                      }
                     }}>Remove</button>
                   </div>
                 </li>
