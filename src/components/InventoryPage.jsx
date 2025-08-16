@@ -170,16 +170,16 @@ function InventoryPage({
               })
               .sort((a, b) => a.daysRemaining - b.daysRemaining)
               .map(({ item, idx, info, daysRemaining }) => (
-                <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <span>{info?.name || item.barcode}</span>
-                    <span className="ms-2 text-muted" style={{ fontSize: '0.9em' }}>
+                <li key={idx} className="list-group-item" style={{ fontSize: '0.95em', padding: '8px 6px' }}>
+                  <div style={{ wordBreak: 'break-word' }}>
+                    <span style={{ fontWeight: 500 }}>{info?.name || item.barcode}</span>
+                    <div className="text-muted" style={{ fontSize: '0.9em', wordBreak: 'break-word' }}>
                       Booked In: {new Date(item.bookedIn).toLocaleString()}
-                    </span>
+                    </div>
                   </div>
-                  <div className="d-flex align-items-center">
-                    <span className="badge bg-warning text-dark me-2">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
-                    <button className="btn btn-outline-danger btn-sm" title="Remove item" onClick={() => {
+                  <div className="d-flex flex-column align-items-start mt-2 gap-1">
+                    <span className="badge bg-warning text-dark mb-1">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
+                    <button className="btn btn-outline-danger btn-sm" style={{ padding: '2px 8px', fontSize: '0.95em', minWidth: 0 }} title="Remove item" onClick={() => {
                       setInventory(prev => prev.filter((_, i) => i !== idx));
                     }}>
                       Remove
@@ -190,14 +190,14 @@ function InventoryPage({
           </ul>
         </div>
         <div className="col-md-6">
-          <h2>Inventory Summary</h2>
-          <table className="table table-bordered table-striped mt-3">
+          <h2 style={{ fontSize: '1.1rem' }}>Inventory Summary</h2>
+          <table className="table table-bordered table-striped mt-3 mb-0" style={{ fontSize: '0.95rem', tableLayout: 'fixed', width: '100%' }}>
             <thead className="table-light">
               <tr>
-                <th>Item Name</th>
-                <th>Barcode</th>
-                <th>Count</th>
-                <th></th>
+                <th style={{ width: '28%' }}>Item Name</th>
+                <th style={{ width: '32%' }}>Barcode</th>
+                <th style={{ width: '15%' }}>Count</th>
+                <th style={{ width: '25%' }}></th>
               </tr>
             </thead>
             <tbody>
@@ -208,23 +208,23 @@ function InventoryPage({
                 }, {})
               ).map(([barcode, count]) => (
                 <tr key={barcode}>
-                  <td>{productLookup[barcode]?.name || '-'}</td>
-                  <td>{barcode}</td>
+                  <td style={{ wordBreak: 'break-word' }}>{productLookup[barcode]?.name || '-'}</td>
+                  <td style={{ wordBreak: 'break-word' }}>{barcode}</td>
                   <td>{count}</td>
                   <td>
                     {!productLookup[barcode] && (
-                      <>
-                        <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
+                      <div className="d-flex flex-column gap-1">
+                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
                           {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
                         </button>
-                        <button className="btn btn-outline-primary btn-sm" onClick={() => {
+                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
                           setLookupBarcode(barcode);
                           navigate('/lookup');
                         }}>
                           Add to Product Lookup
                         </button>
                         {lookupResult.barcode === barcode && (
-                          <div className="mt-2">
+                          <div className="mt-1 w-100" style={{ fontSize: '0.95em' }}>
                             {lookupResult.found ? (
                               <span className="text-success">Found: {lookupResult.name} {lookupResult.brand && `(${lookupResult.brand})`}</span>
                             ) : (
@@ -233,7 +233,7 @@ function InventoryPage({
                           </div>
                         )}
                         {lookupResult.barcode === barcode && lookupResult.found && (
-                          <button className="btn btn-outline-success btn-sm mt-2" onClick={() => {
+                          <button className="btn btn-outline-success btn-sm mt-1 w-100" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
                             setLookupBarcode(barcode);
                             setTimeout(() => {
                               // Use setTimeout to ensure navigation happens after state update
@@ -245,7 +245,7 @@ function InventoryPage({
                             Auto-Fill Lookup Form
                           </button>
                         )}
-                      </>
+                      </div>
                     )}
                   </td>
                 </tr>
