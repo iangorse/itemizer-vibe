@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function ProductLookupPage({
   productLookup,
@@ -8,8 +8,11 @@ function ProductLookupPage({
   setLookupName,
   lookupExpiry,
   setLookupExpiry,
-  handleLookupSubmit
+  handleLookupSubmit,
+  setProductLookup
 }) {
+  const [editBarcode, setEditBarcode] = useState('');
+
   useEffect(() => {
     const prefillName = localStorage.getItem('lookupNamePrefill');
     if (prefillName) {
@@ -20,6 +23,29 @@ function ProductLookupPage({
 
   const handleLookupExpiryChange = (e) => {
     setLookupExpiry(e.target.value);
+  };
+
+  const handleEdit = (barcode) => {
+    setEditBarcode(barcode);
+    setLookupBarcode(barcode);
+    setLookupName(productLookup[barcode]?.name || '');
+    setLookupExpiry('');
+  };
+
+  const handleDelete = (barcode) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      setProductLookup(prev => {
+        const copy = { ...prev };
+        delete copy[barcode];
+        return copy;
+      });
+      if (editBarcode === barcode) {
+        setEditBarcode('');
+        setLookupBarcode('');
+        setLookupName('');
+        setLookupExpiry('');
+      }
+    }
   };
 
   return (
@@ -70,6 +96,7 @@ function ProductLookupPage({
             <th>Barcode</th>
             <th>Name</th>
             <th>Expiry (days)</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -78,6 +105,10 @@ function ProductLookupPage({
               <td>{barcode}</td>
               <td>{info.name}</td>
               <td>{info.expiryDays}</td>
+              <td>
+                <button className="btn btn-outline-secondary btn-sm me-2" onClick={() => handleEdit(barcode)}>Edit</button>
+                <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(barcode)}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -104,6 +104,7 @@ function AppRouter() {
                 lookupExpiry={lookupExpiry}
                 setLookupExpiry={setLookupExpiry}
                 handleLookupSubmit={handleLookupSubmit}
+                setProductLookup={setProductLookup}
               />
             }
           />
