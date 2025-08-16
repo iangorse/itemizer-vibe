@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function ProductLookupPage({
   productLookup,
@@ -12,6 +13,7 @@ function ProductLookupPage({
   setProductLookup
 }) {
   const [editBarcode, setEditBarcode] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const prefillName = localStorage.getItem('lookupNamePrefill');
@@ -48,10 +50,22 @@ function ProductLookupPage({
     }
   };
 
+  // Wrap handleLookupSubmit to redirect after submit
+  const handleSubmitAndRedirect = (e) => {
+    handleLookupSubmit(e);
+    // Only redirect if all fields are filled
+    const barcode = lookupBarcode.trim();
+    const name = lookupName.trim();
+    const expiryDate = lookupExpiry;
+    if (barcode && name && expiryDate) {
+      setTimeout(() => navigate('/'), 0);
+    }
+  };
+
   return (
     <div className="container-fluid px-2 py-2" style={{ maxWidth: 480, margin: '0 auto' }}>
       <h2 className="mb-3 text-center" style={{ fontSize: '1.2rem' }}>Product Lookup</h2>
-      <form onSubmit={handleLookupSubmit} className="mb-4" style={{ background: '#f8f9fa', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+      <form onSubmit={handleSubmitAndRedirect} className="mb-4" style={{ background: '#f8f9fa', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
         <div className="mb-3">
           <label className="form-label mb-1" htmlFor="lookup-barcode">Barcode</label>
           <input

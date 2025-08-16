@@ -23,6 +23,7 @@ function InventoryPage({
   const [lookupResult, setLookupResult] = useState({});
   const [loadingBarcode, setLoadingBarcode] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     if (barcodeInputRef.current) {
@@ -36,6 +37,7 @@ function InventoryPage({
 
   const handleBarcodeSubmit = (e) => {
     e.preventDefault();
+    setErrorMsg('');
     const barcode = barcodeInput.trim();
     if (!barcode) return;
     if (barcode === CONTROL_CODES.BOOK_IN) {
@@ -55,9 +57,30 @@ function InventoryPage({
       setBarcodeInput('');
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
     } else {
+      let playedErrorSound = false;
       setInventory(prev => {
         const idx = prev.findIndex(item => item.barcode === barcode);
-        if (idx === -1) return prev;
+        if (idx === -1) {
+          setErrorMsg('Error: Item not found in inventory.');
+          // Play error sound
+          if (!playedErrorSound) {
+            try {
+              const ctx = new (window.AudioContext || window.webkitAudioContext)();
+              const oscillator = ctx.createOscillator();
+              const gain = ctx.createGain();
+              oscillator.type = 'square';
+              oscillator.frequency.value = 220;
+              gain.gain.value = 0.3;
+              oscillator.connect(gain);
+              gain.connect(ctx.destination);
+              oscillator.start();
+              oscillator.stop(ctx.currentTime + 0.25);
+              oscillator.onended = () => ctx.close();
+            } catch {}
+            playedErrorSound = true;
+          }
+          return prev;
+        }
         return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
       });
       setBarcodeInput('');
@@ -117,8 +140,8 @@ function InventoryPage({
           </div>
         )}
       </div>
-      <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4" style={{ background: '#f8f9fa', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-        <div className="mb-3">
+  <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4" style={{ background: '#f8f9fa', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+  <div className="mb-3">
           <label className="form-label mb-1">{isMobile ? 'Scan Barcode:' : 'Scan or Enter Barcode:'}</label>
           {!isMobile && (
             <input
@@ -151,6 +174,9 @@ function InventoryPage({
           </button>
         </div>
       </form>
+      {errorMsg && (
+        <div className="alert alert-danger text-center mt-2" style={{ fontSize: '1rem' }}>{errorMsg}</div>
+      )}
       {showScanner && (
         <div className="modal d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
