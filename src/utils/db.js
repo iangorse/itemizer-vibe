@@ -3,11 +3,11 @@
 import { openDB } from 'idb';
 
 const DB_NAME = 'itemizer-vibe';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const INVENTORY_STORE = 'inventory';
 const LOOKUP_STORE = 'productLookup';
 
-export async function getDB() {
+export function getDB() {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains(INVENTORY_STORE)) {
@@ -16,9 +16,27 @@ export async function getDB() {
       if (!db.objectStoreNames.contains(LOOKUP_STORE)) {
         db.createObjectStore(LOOKUP_STORE, { keyPath: 'barcode' });
       }
+      if (!db.objectStoreNames.contains('theme')) {
+        db.createObjectStore('theme', { keyPath: 'key' });
+      }
     },
   });
 }
+
+// ...existing code...
+
+// Theme CRUD
+export async function setThemeDB(theme) {
+  const db = await getDB();
+  return db.put('theme', { key: 'selected', value: theme });
+}
+
+export async function getThemeDB() {
+  const db = await getDB();
+  const entry = await db.get('theme', 'selected');
+  return entry ? entry.value : null;
+}
+// ...existing code...
 
 // Inventory CRUD
 export async function getInventory() {
