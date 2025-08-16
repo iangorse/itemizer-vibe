@@ -13,6 +13,7 @@ function InventoryPage({
   setMode,
   barcodeInput,
   setBarcodeInput,
+  setInventory,
   setLookupBarcode
 }) {
   const navigate = useNavigate();
@@ -44,14 +45,16 @@ function InventoryPage({
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
       return;
     }
-
-    // Normal barcode handling
     if (mode === 'in') {
-      // ...existing code for booking in...
+      setInventory(prev => [...prev, { barcode, bookedIn: new Date() }]);
       setBarcodeInput('');
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
     } else {
-      // ...existing code for booking out...
+      setInventory(prev => {
+        const idx = prev.findIndex(item => item.barcode === barcode);
+        if (idx === -1) return prev;
+        return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
+      });
       setBarcodeInput('');
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
     }
@@ -94,68 +97,73 @@ function InventoryPage({
         </div>
       </form>
 
-      <h2 className="mt-4">Current Inventory</h2>
-      <ul className="list-group mb-4">
-        {inventory
-          .map((item, idx) => {
-            const info = productLookup[item.barcode];
-            let daysRemaining = Number.POSITIVE_INFINITY;
-            if (info && typeof info.expiryDays === 'number') {
-              const bookedDate = new Date(item.bookedIn);
-              const today = new Date();
-              daysRemaining = info.expiryDays - Math.floor((today.setHours(0,0,0,0) - bookedDate.setHours(0,0,0,0)) / (1000 * 60 * 60 * 24));
-            }
-            return { item, idx, info, daysRemaining };
-          })
-          .sort((a, b) => a.daysRemaining - b.daysRemaining)
-          .map(({ item, idx, info, daysRemaining }) => (
-            <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <span>{info?.name || item.barcode}</span>
-                <span className="ms-2 text-muted" style={{ fontSize: '0.9em' }}>
-                  Booked In: {new Date(item.bookedIn).toLocaleString()}
-                </span>
-              </div>
-              <span className="badge bg-warning text-dark">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
-            </li>
-          ))}
-      </ul>
-
-      <h2>Inventory Summary</h2>
-      <table className="table table-bordered table-striped mt-3">
-        <thead className="table-light">
-          <tr>
-            <th>Item Name</th>
-            <th>Barcode</th>
-            <th>Count</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(
-            inventory.reduce((acc, item) => {
-              acc[item.barcode] = (acc[item.barcode] || 0) + 1;
-              return acc;
-            }, {})
-          ).map(([barcode, count]) => (
-            <tr key={barcode}>
-              <td>{productLookup[barcode]?.name || '-'}</td>
-              <td>{barcode}</td>
-              <td>{count}</td>
-              <td>
-                {!productLookup[barcode] && (
-                  <button className="btn btn-outline-primary btn-sm" onClick={() => {
-                    setLookupBarcode(barcode);
-                    navigate('/lookup');
-                  }}>
-                    Add to Product Lookup
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="row">
+        <div className="col-md-6">
+          <h2 className="mt-4">Current Inventory</h2>
+          <ul className="list-group mb-4">
+            {inventory
+              .map((item, idx) => {
+                const info = productLookup[item.barcode];
+                let daysRemaining = Number.POSITIVE_INFINITY;
+                if (info && typeof info.expiryDays === 'number') {
+                  const bookedDate = new Date(item.bookedIn);
+                  const today = new Date();
+                  daysRemaining = info.expiryDays - Math.floor((today.setHours(0,0,0,0) - bookedDate.setHours(0,0,0,0)) / (1000 * 60 * 60 * 24));
+                }
+                return { item, idx, info, daysRemaining };
+              })
+              .sort((a, b) => a.daysRemaining - b.daysRemaining)
+              .map(({ item, idx, info, daysRemaining }) => (
+                <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <span>{info?.name || item.barcode}</span>
+                    <span className="ms-2 text-muted" style={{ fontSize: '0.9em' }}>
+                      Booked In: {new Date(item.bookedIn).toLocaleString()}
+                    </span>
+                  </div>
+                  <span className="badge bg-warning text-dark">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
+                </li>
+              ))}
+          </ul>
+        </div>
+        <div className="col-md-6">
+          <h2>Inventory Summary</h2>
+          <table className="table table-bordered table-striped mt-3">
+            <thead className="table-light">
+              <tr>
+                <th>Item Name</th>
+                <th>Barcode</th>
+                <th>Count</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(
+                inventory.reduce((acc, item) => {
+                  acc[item.barcode] = (acc[item.barcode] || 0) + 1;
+                  return acc;
+                }, {})
+              ).map(([barcode, count]) => (
+                <tr key={barcode}>
+                  <td>{productLookup[barcode]?.name || '-'}</td>
+                  <td>{barcode}</td>
+                  <td>{count}</td>
+                  <td>
+                    {!productLookup[barcode] && (
+                      <button className="btn btn-outline-primary btn-sm" onClick={() => {
+                        setLookupBarcode(barcode);
+                        navigate('/lookup');
+                      }}>
+                        Add to Product Lookup
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </>
   );
 }

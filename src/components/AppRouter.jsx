@@ -87,7 +87,7 @@ function AppRouter() {
                 setMode={setMode}
                 barcodeInput={barcodeInput}
                 setBarcodeInput={setBarcodeInput}
-                handleBarcodeSubmit={handleBarcodeSubmit}
+                setInventory={setInventory}
                 setLookupBarcode={setLookupBarcode}
               />
             }
