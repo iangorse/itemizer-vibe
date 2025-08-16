@@ -1,0 +1,52 @@
+/* Default Theme (Light/Dark based on system) */
+:root {
+  --primary-bg: #242424;
+  --primary-text: #fff;
+  --accent: #646cff;
+  --button-bg: #1a1a1a;
+  --button-hover: #646cff;
+}
+
+[data-theme="light"] {
+  --primary-bg: #ffffff;
+  --primary-text: #213547;
+  --accent: #747bff;
+  --button-bg: #f9f9f9;
+  --button-hover: #747bff;
+}
+
+[data-theme="blue"] {
+  --primary-bg: #e3f0ff;
+  --primary-text: #1a2a3a;
+  --accent: #1976d2;
+  --button-bg: #bbdefb;
+  --button-hover: #1976d2;
+}
+
+[data-theme="green"] {
+  --primary-bg: #eafbe3;
+  --primary-text: #234d1a;
+  --accent: #43a047;
+  --button-bg: #c8e6c9;
+  --button-hover: #43a047;
+}
+
+body {
+  background: var(--primary-bg);
+  color: var(--primary-text);
+}
+
+button, .btn {
+  background: var(--button-bg);
+  color: var(--primary-text);
+}
+button:hover, .btn:hover {
+  border-color: var(--button-hover);
+  color: var(--primary-text);
+}
+a {
+  color: var(--accent);
+}
+a:hover {
+  color: var(--button-hover);
+}

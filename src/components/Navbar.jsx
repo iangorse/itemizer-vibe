@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ThemeSwitcher from './ThemeSwitcher';
 
 function Navbar() {
   const location = useLocation();
@@ -82,6 +83,9 @@ function Navbar() {
           >
             Instructions
           </Link>
+          <div style={{ padding: '0.5em 1.2em', borderTop: '1px solid #eee' }}>
+            <ThemeSwitcher />
+          </div>
         </div>
       )}
     </nav>
