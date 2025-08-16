@@ -91,13 +91,13 @@ function InventoryPage({
   };
 
   return (
-    <>
+    <div className="container-fluid px-2 py-2" style={{ maxWidth: 480, margin: '0 auto' }}>
       <div style={{ margin: 0, borderRadius: 0, position: 'relative', top: 0, zIndex: 1020 }}>
         {mode === 'in' ? (
           <div
             className="alert alert-primary text-center fw-bold py-3 mb-0"
             role="alert"
-            style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px', cursor: 'pointer', userSelect: 'none' }}
+            style={{ borderRadius: 8, fontSize: '1.15rem', letterSpacing: '1px', cursor: 'pointer', userSelect: 'none', marginBottom: '1.2rem' }}
             onClick={() => { setMode('out'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}
             title="Tap to switch to Booking Out Mode"
           >
@@ -108,7 +108,7 @@ function InventoryPage({
           <div
             className="alert alert-warning text-center fw-bold py-3 mb-0"
             role="alert"
-            style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px', cursor: 'pointer', userSelect: 'none' }}
+            style={{ borderRadius: 8, fontSize: '1.15rem', letterSpacing: '1px', cursor: 'pointer', userSelect: 'none', marginBottom: '1.2rem' }}
             onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}
             title="Tap to switch to Booking In Mode"
           >
@@ -117,30 +117,22 @@ function InventoryPage({
           </div>
         )}
       </div>
-      <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4 row justify-content-center g-2 align-items-center">
-        <div className="col-auto">
-          <label className="form-label mb-0">{isMobile ? 'Scan Barcode:' : 'Scan or Enter Barcode:'}</label>
+      <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4" style={{ background: '#f8f9fa', borderRadius: 8, padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div className="mb-3">
+          <label className="form-label mb-1">{isMobile ? 'Scan Barcode:' : 'Scan or Enter Barcode:'}</label>
+          {!isMobile && (
+            <input
+              type="text"
+              value={barcodeInput}
+              onChange={handleBarcodeInput}
+              className="form-control"
+              autoFocus
+              ref={barcodeInputRef}
+              style={{ fontSize: '1rem' }}
+            />
+          )}
         </div>
-        {!isMobile && (
-          <>
-            <div className="col-auto">
-              <input
-                type="text"
-                value={barcodeInput}
-                onChange={handleBarcodeInput}
-                className="form-control"
-                autoFocus
-                ref={barcodeInputRef}
-              />
-            </div>
-            <div className="col-auto">
-              <button type="submit" className="btn btn-primary">
-                {mode === 'in' ? 'Book In' : 'Book Out'}
-              </button>
-            </div>
-          </>
-        )}
-        <div className="col-auto" style={{ marginTop: '1.2rem' }}>
+        <div className="d-flex justify-content-center" style={{ marginTop: '1.2rem' }}>
           <button
             type="button"
             className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
@@ -175,11 +167,13 @@ function InventoryPage({
         </div>
       )}
 
-      <div className="row">
-        <div className="col-md-6">
-          <h2 className="mt-4">Current Inventory</h2>
-          <ul className="list-group mb-4">
-            {inventory
+      <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '1rem', marginBottom: '1.2rem' }}>
+        <h2 className="mb-3 text-center" style={{ fontSize: '1.1rem' }}>Current Inventory</h2>
+        <ul className="list-group mb-2" style={{ fontSize: '0.98rem' }}>
+          {inventory.length === 0 ? (
+            <li className="list-group-item text-center text-muted py-3">No items booked in.</li>
+          ) : (
+            inventory
               .map((item, idx) => {
                 const info = productLookup[item.barcode];
                 let daysRemaining = Number.POSITIVE_INFINITY;
@@ -192,91 +186,85 @@ function InventoryPage({
               })
               .sort((a, b) => a.daysRemaining - b.daysRemaining)
               .map(({ item, idx, info, daysRemaining }) => (
-                <li key={idx} className="list-group-item" style={{ fontSize: '0.95em', padding: '8px 6px' }}>
-                  <div style={{ wordBreak: 'break-word' }}>
-                    <span style={{ fontWeight: 500 }}>{info?.name || item.barcode}</span>
-                    <div className="text-muted" style={{ fontSize: '0.9em', wordBreak: 'break-word' }}>
-                      Booked In: {new Date(item.bookedIn).toLocaleString()}
-                    </div>
-                  </div>
-                  <div className="d-flex flex-column align-items-start mt-2 gap-1">
-                    <span className="badge bg-warning text-dark mb-1">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
-                    <button className="btn btn-outline-danger btn-sm" style={{ padding: '2px 8px', fontSize: '0.95em', minWidth: 0 }} title="Remove item" onClick={() => {
+                <li key={idx} className="list-group-item d-flex flex-column align-items-start py-2 px-2 mb-2" style={{ borderRadius: 6 }}>
+                  <div style={{ wordBreak: 'break-word', fontWeight: 500 }}>{info?.name || item.barcode}</div>
+                  <div className="text-muted" style={{ fontSize: '0.95em', wordBreak: 'break-word' }}>Booked In: {new Date(item.bookedIn).toLocaleString()}</div>
+                  <div className="d-flex gap-2 mt-2 w-100">
+                    <span className="badge bg-warning text-dark flex-fill">Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}</span>
+                    <button className="btn btn-outline-danger btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} title="Remove item" onClick={() => {
                       setInventory(prev => prev.filter((_, i) => i !== idx));
-                    }}>
-                      Remove
-                    </button>
+                    }}>Remove</button>
                   </div>
                 </li>
-              ))}
-          </ul>
-        </div>
-        <div className="col-md-6">
-          <h2 style={{ fontSize: '1.1rem' }}>Inventory Summary</h2>
-          <table className="table table-bordered table-striped mt-3 mb-0" style={{ fontSize: '0.95rem', tableLayout: 'fixed', width: '100%' }}>
-            <thead className="table-light">
-              <tr>
-                <th style={{ width: '28%' }}>Item Name</th>
-                <th style={{ width: '32%' }}>Barcode</th>
-                <th style={{ width: '15%' }}>Count</th>
-                <th style={{ width: '25%' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(
-                inventory.reduce((acc, item) => {
-                  acc[item.barcode] = (acc[item.barcode] || 0) + 1;
-                  return acc;
-                }, {})
-              ).map(([barcode, count]) => (
-                <tr key={barcode}>
-                  <td style={{ wordBreak: 'break-word' }}>{productLookup[barcode]?.name || '-'}</td>
-                  <td style={{ wordBreak: 'break-word' }}>{barcode}</td>
-                  <td>{count}</td>
-                  <td>
-                    {!productLookup[barcode] && (
-                      <div className="d-flex flex-column gap-1">
-                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
-                          {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
-                        </button>
-                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
-                          setLookupBarcode(barcode);
-                          navigate('/lookup');
-                        }}>
-                          Add to Product Lookup
-                        </button>
-                        {lookupResult.barcode === barcode && (
-                          <div className="mt-1 w-100" style={{ fontSize: '0.95em' }}>
-                            {lookupResult.found ? (
-                              <span className="text-success">Found: {lookupResult.name} {lookupResult.brand && `(${lookupResult.brand})`}</span>
-                            ) : (
-                              <span className="text-danger">No product found</span>
-                            )}
-                          </div>
-                        )}
-                        {lookupResult.barcode === barcode && lookupResult.found && (
-                          <button className="btn btn-outline-success btn-sm mt-1 w-100" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
-                            setLookupBarcode(barcode);
-                            setTimeout(() => {
-                              // Use setTimeout to ensure navigation happens after state update
-                              navigate('/lookup');
-                            }, 0);
-                            // Store product name in localStorage for ProductLookupPage to use
-                            localStorage.setItem('lookupNamePrefill', lookupResult.name);
-                          }}>
-                            Auto-Fill Lookup Form
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+          )}
+        </ul>
       </div>
-    </>
+      <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '1rem' }}>
+        <h2 className="mb-3 text-center" style={{ fontSize: '1.1rem' }}>Inventory Summary</h2>
+        <table className="table table-bordered table-striped mb-0" style={{ fontSize: '0.95rem', tableLayout: 'fixed', width: '100%' }}>
+          <thead className="table-light">
+            <tr>
+              <th style={{ width: '28%' }}>Item Name</th>
+              <th style={{ width: '32%' }}>Barcode</th>
+              <th style={{ width: '15%' }}>Count</th>
+              <th style={{ width: '25%' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(
+              inventory.reduce((acc, item) => {
+                acc[item.barcode] = (acc[item.barcode] || 0) + 1;
+                return acc;
+              }, {})
+            ).map(([barcode, count]) => (
+              <tr key={barcode}>
+                <td style={{ wordBreak: 'break-word' }}>{productLookup[barcode]?.name || '-'}</td>
+                <td style={{ wordBreak: 'break-word' }}>{barcode}</td>
+                <td>{count}</td>
+                <td>
+                  {!productLookup[barcode] && (
+                    <div className="d-flex flex-column gap-1">
+                      <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
+                        {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
+                      </button>
+                      <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
+                        setLookupBarcode(barcode);
+                        navigate('/lookup');
+                      }}>
+                        Add to Product Lookup
+                      </button>
+                      {lookupResult.barcode === barcode && (
+                        <div className="mt-1 w-100" style={{ fontSize: '0.95em' }}>
+                          {lookupResult.found ? (
+                            <span className="text-success">Found: {lookupResult.name} {lookupResult.brand && `(${lookupResult.brand})`}</span>
+                          ) : (
+                            <span className="text-danger">No product found</span>
+                          )}
+                        </div>
+                      )}
+                      {lookupResult.barcode === barcode && lookupResult.found && (
+                        <button className="btn btn-outline-success btn-sm mt-1 w-100" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
+                          setLookupBarcode(barcode);
+                          setTimeout(() => {
+                            // Use setTimeout to ensure navigation happens after state update
+                            navigate('/lookup');
+                          }, 0);
+                          // Store product name in localStorage for ProductLookupPage to use
+                          localStorage.setItem('lookupNamePrefill', lookupResult.name);
+                        }}>
+                          Auto-Fill Lookup Form
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
