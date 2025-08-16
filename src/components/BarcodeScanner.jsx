@@ -16,6 +16,20 @@ function BarcodeScanner({ onScan, onClose }) {
         { fps: 10, qrbox: 250 },
         (decodedText) => {
           if (runningRef.current) {
+            // Play beep sound
+            try {
+              const ctx = new (window.AudioContext || window.webkitAudioContext)();
+              const oscillator = ctx.createOscillator();
+              const gain = ctx.createGain();
+              oscillator.type = 'sine';
+              oscillator.frequency.value = 880;
+              gain.gain.value = 0.2;
+              oscillator.connect(gain);
+              gain.connect(ctx.destination);
+              oscillator.start();
+              oscillator.stop(ctx.currentTime + 0.15);
+              oscillator.onended = () => ctx.close();
+            } catch {}
             runningRef.current = false;
             html5QrCode.stop().then(() => {
               html5QrCode.clear();

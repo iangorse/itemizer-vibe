@@ -132,8 +132,21 @@ function InventoryPage({
           </>
         )}
         <div className="col-auto">
-          <button type="button" className="btn btn-outline-secondary" onClick={() => setShowScanner(true)}>
-            Scan Barcode
+          <button
+            type="button"
+            className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
+            style={{ fontSize: '2.2rem', width: '4.2rem', height: '4.2rem', borderRadius: '50%' }}
+            onClick={() => setShowScanner(true)}
+            aria-label="Scan Barcode"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="1.8em" height="1.8em" fill="currentColor" viewBox="0 0 16 16">
+              <rect x="1" y="2" width="1" height="12" rx="0.5"/>
+              <rect x="3" y="2" width="2" height="12" rx="0.5"/>
+              <rect x="6" y="2" width="1" height="12" rx="0.5"/>
+              <rect x="8" y="2" width="2" height="12" rx="0.5"/>
+              <rect x="11" y="2" width="1" height="12" rx="0.5"/>
+              <rect x="13" y="2" width="1" height="12" rx="0.5"/>
+            </svg>
           </button>
         </div>
       </form>
