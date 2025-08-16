@@ -244,7 +244,7 @@ function InventoryPage({
               <tr>
                 <th style={{ width: '28%' }}>Item Name</th>
                 <th style={{ width: '32%' }}>Barcode</th>
-                <th style={{ width: '15%' }}>Count</th>
+                <th style={{ width: '15%' }}>Qty</th>
                 <th style={{ width: '25%' }}></th>
               </tr>
             </thead>
