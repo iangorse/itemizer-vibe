@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -85,6 +86,6 @@ import { Link, useLocation } from 'react-router-dom';
       )}
     </nav>
   );
-// ...existing code...
+}
 
 export default Navbar;
