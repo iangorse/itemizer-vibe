@@ -1,4 +1,4 @@
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from './BarcodeScanner';
@@ -229,10 +229,24 @@ function InventoryPage({
       </div>
       <button
         type="button"
-        style={{ width: '100%', padding: '0.8em', fontSize: '1.08em', borderRadius: '8px', background: '#bfa14a', color: '#23272f', fontWeight: 700, marginBottom: '1em', boxShadow: '0 2px 8px rgba(191,161,74,0.10)' }}
+        style={{
+          width: '100%',
+          padding: '0.8em',
+          fontSize: '1.08em',
+          borderRadius: '8px',
+          fontWeight: 700,
+          marginBottom: '1em',
+          background: 'var(--button-bg)',
+          color: 'var(--primary-text)',
+          border: '2px solid var(--accent)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          transition: 'background 0.2s, color 0.2s',
+        }}
         onClick={() => setShowSummary(s => !s)}
         aria-expanded={showSummary}
         aria-controls="inventory-summary"
+        onMouseOver={e => e.currentTarget.style.background = 'var(--button-hover)'}
+        onMouseOut={e => e.currentTarget.style.background = 'var(--button-bg)'}
       >
         {showSummary ? 'Hide Inventory Summary' : 'Show Inventory Summary'}
       </button>
