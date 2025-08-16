@@ -1,4 +1,4 @@
-# ⚡️ This entire application was vibe coded as an experiment to see how it works. There may be errors or quirks due to this approach.
+# ⚡️ This entire application was vibe coded as an experiment to see how it works. <sub>There may be errors or quirks due to this approach.</sub>
 
 # Itemizer-Vibe
 
@@ -6,7 +6,14 @@ Itemizer-Vibe is a modern inventory management web application designed for fast
 > **Note:** The application must be run using **HTTPS**; camera access will not work on HTTP due to browser security restrictions.
 
 ## Features
-
+ - Barcode-based booking in and out of items
+ - FIFO booking out (oldest item removed first)
+ - Product lookup with name and expiry assignment
+ - Expiry tracking for all items
+ - Mobile camera barcode scanning
+ - Persistent local storage (IndexedDB)
+ - Manual edit and removal of items
+ - Inventory summary and quick actions
 
 ## How to Use
 
