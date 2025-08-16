@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const CONTROL_CODES = {
@@ -18,6 +18,8 @@ function InventoryPage({
 }) {
   const navigate = useNavigate();
   const barcodeInputRef = useRef(null);
+  const [lookupResult, setLookupResult] = useState({});
+  const [loadingBarcode, setLoadingBarcode] = useState(null);
 
   useEffect(() => {
     if (barcodeInputRef.current) {
@@ -58,6 +60,23 @@ function InventoryPage({
       setBarcodeInput('');
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
     }
+  };
+
+  const handleLookupBarcode = async (barcode) => {
+    setLoadingBarcode(barcode);
+    setLookupResult({});
+    try {
+      const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+      const data = await res.json();
+      if (data.status === 1) {
+        setLookupResult({ barcode, name: data.product.product_name || 'Unknown', brand: data.product.brands || '', found: true });
+      } else {
+        setLookupResult({ barcode, found: false });
+      }
+    } catch {
+      setLookupResult({ barcode, found: false });
+    }
+    setLoadingBarcode(null);
   };
 
   return (
@@ -150,12 +169,39 @@ function InventoryPage({
                   <td>{count}</td>
                   <td>
                     {!productLookup[barcode] && (
-                      <button className="btn btn-outline-primary btn-sm" onClick={() => {
-                        setLookupBarcode(barcode);
-                        navigate('/lookup');
-                      }}>
-                        Add to Product Lookup
-                      </button>
+                      <>
+                        <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
+                          {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
+                        </button>
+                        <button className="btn btn-outline-primary btn-sm" onClick={() => {
+                          setLookupBarcode(barcode);
+                          navigate('/lookup');
+                        }}>
+                          Add to Product Lookup
+                        </button>
+                        {lookupResult.barcode === barcode && (
+                          <div className="mt-2">
+                            {lookupResult.found ? (
+                              <span className="text-success">Found: {lookupResult.name} {lookupResult.brand && `(${lookupResult.brand})`}</span>
+                            ) : (
+                              <span className="text-danger">No product found</span>
+                            )}
+                          </div>
+                        )}
+                        {lookupResult.barcode === barcode && lookupResult.found && (
+                          <button className="btn btn-outline-success btn-sm mt-2" onClick={() => {
+                            setLookupBarcode(barcode);
+                            setTimeout(() => {
+                              // Use setTimeout to ensure navigation happens after state update
+                              navigate('/lookup');
+                            }, 0);
+                            // Store product name in localStorage for ProductLookupPage to use
+                            localStorage.setItem('lookupNamePrefill', lookupResult.name);
+                          }}>
+                            Auto-Fill Lookup Form
+                          </button>
+                        )}
+                      </>
                     )}
                   </td>
                 </tr>

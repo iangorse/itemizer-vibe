@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 function ProductLookupPage({
   productLookup,
@@ -10,6 +10,14 @@ function ProductLookupPage({
   setLookupExpiry,
   handleLookupSubmit
 }) {
+  useEffect(() => {
+    const prefillName = localStorage.getItem('lookupNamePrefill');
+    if (prefillName) {
+      setLookupName(prefillName);
+      localStorage.removeItem('lookupNamePrefill');
+    }
+  }, []);
+
   const handleLookupExpiryChange = (e) => {
     setLookupExpiry(e.target.value);
   };
