@@ -227,7 +227,8 @@ function InventoryPage({
                       Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}
                     </span>
                     <button className="btn btn-outline-danger btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} title="Remove item" onClick={async () => {
-                      if (window.confirm('Are you sure you want to remove this item from inventory?')) {
+                      const itemName = info?.name || item.barcode;
+                      if (window.confirm(`Are you sure you want to remove '${itemName}' from inventory?`)) {
                         await removeInventoryItem(item.id);
                         const updated = await getInventory();
                         setInventory(updated);
