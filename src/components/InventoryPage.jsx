@@ -25,6 +25,7 @@ function InventoryPage({
   const [loadingBarcode, setLoadingBarcode] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {
     if (barcodeInputRef.current) {
@@ -240,70 +241,81 @@ function InventoryPage({
           )}
         </ul>
       </div>
-      <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '1rem' }}>
-        <h2 className="mb-3 text-center" style={{ fontSize: '1.1rem' }}>Inventory Summary</h2>
-        <table className="table table-bordered table-striped mb-0" style={{ fontSize: '0.95rem', tableLayout: 'fixed', width: '100%' }}>
-          <thead className="table-light">
-            <tr>
-              <th style={{ width: '28%' }}>Item Name</th>
-              <th style={{ width: '32%' }}>Barcode</th>
-              <th style={{ width: '15%' }}>Count</th>
-              <th style={{ width: '25%' }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(
-              inventory.reduce((acc, item) => {
-                acc[item.barcode] = (acc[item.barcode] || 0) + 1;
-                return acc;
-              }, {})
-            ).map(([barcode, count]) => (
-              <tr key={barcode}>
-                <td style={{ wordBreak: 'break-word' }}>{productLookup[barcode]?.name || '-'}</td>
-                <td style={{ wordBreak: 'break-word' }}>{barcode}</td>
-                <td>{count}</td>
-                <td>
-                  {!productLookup[barcode] && (
-                    <div className="d-flex flex-column gap-1">
-                      <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
-                        {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
-                      </button>
-                      <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
-                        setLookupBarcode(barcode);
-                        navigate('/lookup');
-                      }}>
-                        Add to Product Lookup
-                      </button>
-                      {lookupResult.barcode === barcode && (
-                        <div className="mt-1 w-100" style={{ fontSize: '0.95em' }}>
-                          {lookupResult.found ? (
-                            <span className="text-success">Found: {lookupResult.name} {lookupResult.brand && `(${lookupResult.brand})`}</span>
-                          ) : (
-                            <span className="text-danger">No product found</span>
-                          )}
-                        </div>
-                      )}
-                      {lookupResult.barcode === barcode && lookupResult.found && (
-                        <button className="btn btn-outline-success btn-sm mt-1 w-100" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
-                          setLookupBarcode(barcode);
-                          setTimeout(() => {
-                            // Use setTimeout to ensure navigation happens after state update
-                            navigate('/lookup');
-                          }, 0);
-                          // Store product name in localStorage for ProductLookupPage to use
-                          localStorage.setItem('lookupNamePrefill', lookupResult.name);
-                        }}>
-                          Auto-Fill Lookup Form
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </td>
+      <button
+        type="button"
+        style={{ width: '100%', padding: '0.8em', fontSize: '1.08em', borderRadius: '8px', background: '#bfa14a', color: '#23272f', fontWeight: 700, marginBottom: '1em', boxShadow: '0 2px 8px rgba(191,161,74,0.10)' }}
+        onClick={() => setShowSummary(s => !s)}
+        aria-expanded={showSummary}
+        aria-controls="inventory-summary"
+      >
+        {showSummary ? 'Hide Inventory Summary' : 'Show Inventory Summary'}
+      </button>
+      {showSummary && (
+        <div id="inventory-summary" style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '1rem' }}>
+          <h2 className="mb-3 text-center" style={{ fontSize: '1.1rem' }}>Inventory Summary</h2>
+          <table className="table table-bordered table-striped mb-0" style={{ fontSize: '0.95rem', tableLayout: 'fixed', width: '100%' }}>
+            <thead className="table-light">
+              <tr>
+                <th style={{ width: '28%' }}>Item Name</th>
+                <th style={{ width: '32%' }}>Barcode</th>
+                <th style={{ width: '15%' }}>Count</th>
+                <th style={{ width: '25%' }}></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {Object.entries(
+                inventory.reduce((acc, item) => {
+                  acc[item.barcode] = (acc[item.barcode] || 0) + 1;
+                  return acc;
+                }, {})
+              ).map(([barcode, count]) => (
+                <tr key={barcode}>
+                  <td style={{ wordBreak: 'break-word' }}>{productLookup[barcode]?.name || '-'}</td>
+                  <td style={{ wordBreak: 'break-word' }}>{barcode}</td>
+                  <td>{count}</td>
+                  <td>
+                    {!productLookup[barcode] && (
+                      <div className="d-flex flex-column gap-1">
+                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
+                          {loadingBarcode === barcode ? 'Looking up...' : 'Lookup Barcode'}
+                        </button>
+                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
+                          setLookupBarcode(barcode);
+                          navigate('/lookup');
+                        }}>
+                          Add to Product Lookup
+                        </button>
+                        {lookupResult.barcode === barcode && (
+                          <div className="mt-1 w-100" style={{ fontSize: '0.95em' }}>
+                            {lookupResult.found ? (
+                              <span className="text-success">Found: {lookupResult.name} {lookupResult.brand && `(${lookupResult.brand})`}</span>
+                            ) : (
+                              <span className="text-danger">No product found</span>
+                            )}
+                          </div>
+                        )}
+                        {lookupResult.barcode === barcode && lookupResult.found && (
+                          <button className="btn btn-outline-success btn-sm mt-1 w-100" style={{ minWidth: 0, padding: '2px 6px', fontSize: '0.95em' }} onClick={() => {
+                            setLookupBarcode(barcode);
+                            setTimeout(() => {
+                              // Use setTimeout to ensure navigation happens after state update
+                              navigate('/lookup');
+                            }, 0);
+                            // Store product name in localStorage for ProductLookupPage to use
+                            localStorage.setItem('lookupNamePrefill', lookupResult.name);
+                          }}>
+                            Auto-Fill Lookup Form
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
