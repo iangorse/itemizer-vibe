@@ -210,9 +210,15 @@ function InventoryPage({
                   <div style={{ wordBreak: 'break-word', fontWeight: 500 }}>{info?.name || item.barcode}</div>
                   <div className="text-muted" style={{ fontSize: '0.95em', wordBreak: 'break-word' }}>Booked In: {new Date(item.bookedIn).toLocaleString()}</div>
                   <div className="d-flex gap-2 mt-2 w-100">
-                    <span className="badge bg-warning text-dark flex-fill d-flex align-items-center justify-content-center" style={{ height: '2.1em', fontSize: '1em' }}>
-                      Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}
-                    </span>
+                    {daysRemaining === Number.POSITIVE_INFINITY ? (
+                      <button className="btn btn-outline-primary btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} onClick={() => handleLookupBarcode(item.barcode)}>
+                        Lookup
+                      </button>
+                    ) : (
+                      <span className="badge bg-warning text-dark flex-fill d-flex align-items-center justify-content-center" style={{ height: '2.1em', fontSize: '1em' }}>
+                        Days Remaining: {daysRemaining}
+                      </span>
+                    )}
                     <button className="btn btn-outline-danger btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} title="Remove item" onClick={async () => {
                       const itemName = info?.name || item.barcode;
                       if (window.confirm(`Are you sure you want to remove '${itemName}' from inventory?`)) {
