@@ -8,54 +8,80 @@ function BarcodeScanner({ onScan, onClose }) {
 
   const runningRef = useRef(false);
   useEffect(() => {
-    const html5QrCode = new Html5Qrcode(divId);
-    html5QrCode.start(
-      { facingMode: 'environment' },
-      { fps: 10, qrbox: 250 },
-      (decodedText) => {
-        onScan(decodedText);
-        runningRef.current = false;
-        html5QrCode.stop().then(() => {
-          html5QrCode.clear();
-        });
-      },
-      (errorMessage) => {
-        // Ignore scan errors
-      }
-    ).then(() => {
-      runningRef.current = true;
-    }).catch((err) => {
-      setError('Unable to access camera. Please check permissions and try again.');
-    });
-    scannerRef.current = html5QrCode;
+    let html5QrCode = null;
+    if (document.getElementById(divId)) {
+      html5QrCode = new Html5Qrcode(divId);
+      html5QrCode.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          if (runningRef.current) {
+            runningRef.current = false;
+            html5QrCode.stop().then(() => {
+              html5QrCode.clear();
+              scannerRef.current = null;
+              onScan(decodedText);
+            });
+          }
+        },
+        (errorMessage) => {
+          // Ignore scan errors
+        }
+      ).then(() => {
+        runningRef.current = true;
+      }).catch((err) => {
+        setError('Unable to access camera. Please check permissions and try again.');
+      });
+      scannerRef.current = html5QrCode;
+    }
     return () => {
-      if (runningRef.current) {
-        html5QrCode.stop().catch(() => {});
-        html5QrCode.clear();
+      if (scannerRef.current) {
+        if (runningRef.current) {
+          scannerRef.current.stop().catch(() => {});
+        }
+        scannerRef.current.clear();
         runningRef.current = false;
+        scannerRef.current = null;
       }
+      // Always clear the div
+      const el = document.getElementById(divId);
+      if (el) el.innerHTML = '';
     };
   }, [onScan, onClose]);
 
   return (
     <div className="text-center">
       <div
-        id={divId}
         style={{
-          width: 300,
-          height: 300,
-          margin: '0 auto',
-          background: '#222',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          minHeight: '340px',
         }}
-      />
+      >
+        <div
+          id={divId}
+          style={{
+            width: '400px',
+            height: '300px',
+            maxWidth: '100%',
+            background: '#222',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          }}
+        />
+      </div>
       {error && <div className="alert alert-danger mt-3">{error}</div>}
       <button
         className="btn btn-secondary mt-3"
         onClick={() => {
           if (scannerRef.current && runningRef.current) {
+            runningRef.current = false;
             scannerRef.current.stop().then(() => {
               scannerRef.current.clear();
-              runningRef.current = false;
+              scannerRef.current = null;
               onClose();
             });
           } else {

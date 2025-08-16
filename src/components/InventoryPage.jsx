@@ -1,3 +1,4 @@
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from './BarcodeScanner';
@@ -107,23 +108,27 @@ function InventoryPage({
       </div>
       <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4 row justify-content-center g-2 align-items-center">
         <div className="col-auto">
-          <label className="form-label mb-0">Scan or Enter Barcode:</label>
+          <label className="form-label mb-0">{isMobile ? 'Scan Barcode:' : 'Scan or Enter Barcode:'}</label>
         </div>
-        <div className="col-auto">
-          <input
-            type="text"
-            value={barcodeInput}
-            onChange={handleBarcodeInput}
-            className="form-control"
-            autoFocus
-            ref={barcodeInputRef}
-          />
-        </div>
-        <div className="col-auto">
-          <button type="submit" className="btn btn-primary">
-            {mode === 'in' ? 'Book In' : 'Book Out'}
-          </button>
-        </div>
+        {!isMobile && (
+          <>
+            <div className="col-auto">
+              <input
+                type="text"
+                value={barcodeInput}
+                onChange={handleBarcodeInput}
+                className="form-control"
+                autoFocus
+                ref={barcodeInputRef}
+              />
+            </div>
+            <div className="col-auto">
+              <button type="submit" className="btn btn-primary">
+                {mode === 'in' ? 'Book In' : 'Book Out'}
+              </button>
+            </div>
+          </>
+        )}
         <div className="col-auto">
           <button type="button" className="btn btn-outline-secondary" onClick={() => setShowScanner(true)}>
             Scan Barcode
@@ -136,7 +141,7 @@ function InventoryPage({
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Scan Barcode</h5>
-                <button type="button" className="btn-close" onClick={() => setShowScanner(false)}></button>
+                <button type="button" className="btn-close" onClick={() => document.querySelector('.modal .btn-secondary')?.click()}></button>
               </div>
               <div className="modal-body">
                 <BarcodeScanner onScan={handleScanBarcode} onClose={() => setShowScanner(false)} />
