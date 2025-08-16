@@ -1,0 +1,5 @@
+# idb Library Installation
+
+To use the IndexedDB utility, install the `idb` package:
+
+npm install idb

@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from './BarcodeScanner';
+import { addInventoryItem, removeInventoryItem, getInventory } from '../utils/db';
 
 const CONTROL_CODES = {
   BOOK_IN: 'Book In',
@@ -35,7 +36,7 @@ function InventoryPage({
     setBarcodeInput(e.target.value);
   };
 
-  const handleBarcodeSubmit = (e) => {
+  const handleBarcodeSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     const barcode = barcodeInput.trim();
@@ -53,36 +54,42 @@ function InventoryPage({
       return;
     }
     if (mode === 'in') {
-      setInventory(prev => [...prev, { barcode, bookedIn: new Date() }]);
+      await addInventoryItem({ barcode, bookedIn: new Date() });
+      const items = await getInventory();
+      setInventory(items);
       setBarcodeInput('');
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
     } else {
       let playedErrorSound = false;
-      setInventory(prev => {
-        const idx = prev.findIndex(item => item.barcode === barcode);
-        if (idx === -1) {
-          setErrorMsg('Error: Item not found in inventory.');
-          // Play error sound
-          if (!playedErrorSound) {
-            try {
-              const ctx = new (window.AudioContext || window.webkitAudioContext)();
-              const oscillator = ctx.createOscillator();
-              const gain = ctx.createGain();
-              oscillator.type = 'square';
-              oscillator.frequency.value = 220;
-              gain.gain.value = 0.3;
-              oscillator.connect(gain);
-              gain.connect(ctx.destination);
-              oscillator.start();
-              oscillator.stop(ctx.currentTime + 0.25);
-              oscillator.onended = () => ctx.close();
-            } catch {}
-            playedErrorSound = true;
-          }
-          return prev;
+      const items = await getInventory();
+      const idx = items.findIndex(item => item.barcode === barcode);
+      if (idx === -1) {
+        setErrorMsg('Error: Item not found in inventory.');
+        // Play error sound
+        if (!playedErrorSound) {
+          try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gain = ctx.createGain();
+            oscillator.type = 'square';
+            oscillator.frequency.value = 220;
+            gain.gain.value = 0.3;
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+            oscillator.start();
+            oscillator.stop(ctx.currentTime + 0.25);
+            oscillator.onended = () => ctx.close();
+          } catch {}
+          playedErrorSound = true;
         }
-        return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
-      });
+        setBarcodeInput('');
+        if (barcodeInputRef.current) barcodeInputRef.current.focus();
+        setInventory(items);
+        return;
+      }
+      await removeInventoryItem(items[idx].id);
+      const updated = await getInventory();
+      setInventory(updated);
       setBarcodeInput('');
       if (barcodeInputRef.current) barcodeInputRef.current.focus();
     }
@@ -219,9 +226,11 @@ function InventoryPage({
                     <span className="badge bg-warning text-dark flex-fill d-flex align-items-center justify-content-center" style={{ height: '2.1em', fontSize: '1em' }}>
                       Days Remaining: {daysRemaining === Number.POSITIVE_INFINITY ? '-' : daysRemaining}
                     </span>
-                    <button className="btn btn-outline-danger btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} title="Remove item" onClick={() => {
+                    <button className="btn btn-outline-danger btn-sm flex-fill" style={{ minWidth: 0, fontSize: '0.97em' }} title="Remove item" onClick={async () => {
                       if (window.confirm('Are you sure you want to remove this item from inventory?')) {
-                        setInventory(prev => prev.filter((_, i) => i !== idx));
+                        await removeInventoryItem(item.id);
+                        const updated = await getInventory();
+                        setInventory(updated);
                       }
                     }}>Remove</button>
                   </div>

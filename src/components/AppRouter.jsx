@@ -3,33 +3,28 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
 import InventoryPage from './InventoryPage';
 import ProductLookupPage from './ProductLookupPage';
-
-function getLocal(key, fallback) {
-  try {
-    const val = localStorage.getItem(key);
-    return val ? JSON.parse(val) : fallback;
-  } catch {
-    return fallback;
-  }
-}
+import { getInventory, addInventoryItem, removeInventoryItem, getProductLookup, setProductLookupItem, removeProductLookupItem } from '../utils/db';
 
 function AppRouter() {
-  const [inventory, setInventory] = useState(() => getLocal('inventory', []));
+  const [inventory, setInventory] = useState([]);
   const [mode, setMode] = useState('in');
   const [barcodeInput, setBarcodeInput] = useState('');
-  const [productLookup, setProductLookup] = useState(() => getLocal('productLookup', {}));
+  const [productLookup, setProductLookup] = useState({});
   const [lookupBarcode, setLookupBarcode] = useState('');
   const [lookupName, setLookupName] = useState('');
   const [lookupExpiry, setLookupExpiry] = useState('');
   const barcodeInputRef = useRef(null);
 
+  // Load inventory and productLookup from IndexedDB on mount
   useEffect(() => {
-    localStorage.setItem('inventory', JSON.stringify(inventory));
-  }, [inventory]);
-
-  useEffect(() => {
-    localStorage.setItem('productLookup', JSON.stringify(productLookup));
-  }, [productLookup]);
+    getInventory().then(items => setInventory(items));
+    getProductLookup().then(lookups => {
+      // Convert array to object keyed by barcode
+      const lookupObj = {};
+      lookups.forEach(item => { lookupObj[item.barcode] = item; });
+      setProductLookup(lookupObj);
+    });
+  }, []);
 
   useEffect(() => {
     if (barcodeInputRef.current) {
@@ -37,18 +32,26 @@ function AppRouter() {
     }
   }, [mode]);
 
-  const handleBarcodeSubmit = (e) => {
+  const handleBarcodeSubmit = async (e) => {
     e.preventDefault();
     const barcode = barcodeInput.trim();
     if (!barcode) return;
     if (mode === 'in') {
-      setInventory((prev) => [...prev, { barcode, bookedIn: new Date() }]);
+      const item = { barcode, bookedIn: new Date() };
+      await addInventoryItem(item);
+      const items = await getInventory();
+      setInventory(items);
     } else {
-      setInventory((prev) => {
-        const idx = prev.findIndex(item => item.barcode === barcode);
-        if (idx === -1) return prev;
-        return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
-      });
+      // Remove first matching item (FIFO)
+      const items = await getInventory();
+      const idx = items.findIndex(item => item.barcode === barcode);
+      if (idx !== -1) {
+        await removeInventoryItem(items[idx].id);
+        const updated = await getInventory();
+        setInventory(updated);
+      } else {
+        setInventory(items); // No change
+      }
     }
     setBarcodeInput('');
     if (barcodeInputRef.current) {
@@ -56,7 +59,7 @@ function AppRouter() {
     }
   };
 
-  const handleLookupSubmit = (e) => {
+  const handleLookupSubmit = async (e) => {
     e.preventDefault();
     const barcode = lookupBarcode.trim();
     const name = lookupName.trim();
@@ -66,7 +69,12 @@ function AppRouter() {
     const expiry = new Date(expiryDate);
     const diffTime = expiry.getTime() - today.setHours(0,0,0,0);
     const expiryDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    setProductLookup(prev => ({ ...prev, [barcode]: { name, expiryDays } }));
+    const item = { barcode, name, expiryDays };
+    await setProductLookupItem(item);
+    const lookups = await getProductLookup();
+    const lookupObj = {};
+    lookups.forEach(i => { lookupObj[i.barcode] = i; });
+    setProductLookup(lookupObj);
     setLookupBarcode('');
     setLookupName('');
     setLookupExpiry('');

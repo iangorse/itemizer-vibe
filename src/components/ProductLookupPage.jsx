@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { setProductLookupItem, removeProductLookupItem, getProductLookup } from '../utils/db';
 
 function ProductLookupPage({
   productLookup,
@@ -34,13 +35,13 @@ function ProductLookupPage({
     setLookupExpiry('');
   };
 
-  const handleDelete = (barcode) => {
+  const handleDelete = async (barcode) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      setProductLookup(prev => {
-        const copy = { ...prev };
-        delete copy[barcode];
-        return copy;
-      });
+      await removeProductLookupItem(barcode);
+      const lookups = await getProductLookup();
+      const lookupObj = {};
+      lookups.forEach(i => { lookupObj[i.barcode] = i; });
+      setProductLookup(lookupObj);
       if (editBarcode === barcode) {
         setEditBarcode('');
         setLookupBarcode('');
@@ -51,15 +52,26 @@ function ProductLookupPage({
   };
 
   // Wrap handleLookupSubmit to redirect after submit
-  const handleSubmitAndRedirect = (e) => {
-    handleLookupSubmit(e);
-    // Only redirect if all fields are filled
+  const handleSubmitAndRedirect = async (e) => {
+    e.preventDefault();
     const barcode = lookupBarcode.trim();
     const name = lookupName.trim();
     const expiryDate = lookupExpiry;
-    if (barcode && name && expiryDate) {
-      setTimeout(() => navigate('/'), 0);
-    }
+    if (!barcode || !name || !expiryDate) return;
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    const diffTime = expiry.getTime() - today.setHours(0,0,0,0);
+    const expiryDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const item = { barcode, name, expiryDays };
+    await setProductLookupItem(item);
+    const lookups = await getProductLookup();
+    const lookupObj = {};
+    lookups.forEach(i => { lookupObj[i.barcode] = i; });
+    setProductLookup(lookupObj);
+    setLookupBarcode('');
+    setLookupName('');
+    setLookupExpiry('');
+    setTimeout(() => navigate('/'), 0);
   };
 
   return (
