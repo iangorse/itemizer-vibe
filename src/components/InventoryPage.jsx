@@ -92,15 +92,17 @@ function InventoryPage({
 
   return (
     <>
-      {mode === 'in' ? (
-        <div className="alert alert-success text-center fw-bold" role="alert">
-          Booking In Mode
-        </div>
-      ) : (
-        <div className="alert alert-danger text-center fw-bold" role="alert">
-          Booking Out Mode
-        </div>
-      )}
+  <div style={{ margin: 0, borderRadius: 0, position: 'relative', top: 0, zIndex: 1020 }}>
+        {mode === 'in' ? (
+          <div className="alert alert-primary text-center fw-bold py-3 mb-0" role="alert" style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px' }}>
+            Booking In Mode
+          </div>
+        ) : (
+          <div className="alert alert-warning text-center fw-bold py-3 mb-0" role="alert" style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px' }}>
+            Booking Out Mode
+          </div>
+        )}
+      </div>
 
       <div className="mb-3">
         <button className={`btn btn-success me-2${mode === 'in' ? ' active' : ''}`} onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book In</button>
