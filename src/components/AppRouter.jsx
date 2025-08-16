@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
 import InventoryPage from './InventoryPage';
 import ProductLookupPage from './ProductLookupPage';
+import InstructionsPage from './InstructionsPage';
 import { getInventory, addInventoryItem, removeInventoryItem, getProductLookup, setProductLookupItem, removeProductLookupItem } from '../utils/db';
 
 function AppRouter() {
@@ -115,6 +116,10 @@ function AppRouter() {
                 setProductLookup={setProductLookup}
               />
             }
+          />
+          <Route
+            path="/instructions"
+            element={<InstructionsPage />}
           />
         </Routes>
       </div>

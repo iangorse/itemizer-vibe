@@ -22,6 +22,13 @@ function Navbar() {
           >
             Product Lookup
           </Link>
+          <Link
+            to="/instructions"
+            className={`nav-link${location.pathname === '/instructions' ? ' active' : ''}`}
+            style={{ fontSize: '1rem', padding: '0.2rem 0.5rem' }}
+          >
+            Instructions
+          </Link>
         </div>
       </div>
     </nav>
