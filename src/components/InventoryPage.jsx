@@ -76,7 +76,7 @@ function InventoryPage({
         <button className={`btn btn-success me-2${mode === 'in' ? ' active' : ''}`} onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book In</button>
         <button className={`btn btn-danger${mode === 'out' ? ' active' : ''}`} onClick={() => { setMode('out'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book Out</button>
       </div>
-      <form onSubmit={handleBarcodeSubmit} className="mb-4 row g-2 align-items-center">
+      <form onSubmit={handleBarcodeSubmit} className="mb-4 row justify-content-center g-2 align-items-center">
         <div className="col-auto">
           <label className="form-label mb-0">Scan or Enter Barcode:</label>
         </div>
