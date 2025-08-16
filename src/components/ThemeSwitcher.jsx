@@ -1,7 +1,6 @@
 import React from 'react';
 
 const themes = [
-  { key: '', label: 'System' },
   { key: 'light', label: 'Light' },
   { key: 'blue', label: 'Blue' },
   { key: 'green', label: 'Green' },
