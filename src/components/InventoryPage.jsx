@@ -92,21 +92,30 @@ function InventoryPage({
 
   return (
     <>
-  <div style={{ margin: 0, borderRadius: 0, position: 'relative', top: 0, zIndex: 1020 }}>
+      <div style={{ margin: 0, borderRadius: 0, position: 'relative', top: 0, zIndex: 1020 }}>
         {mode === 'in' ? (
-          <div className="alert alert-primary text-center fw-bold py-3 mb-0" role="alert" style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px' }}>
+          <div
+            className="alert alert-primary text-center fw-bold py-3 mb-0"
+            role="alert"
+            style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px', cursor: 'pointer', userSelect: 'none' }}
+            onClick={() => { setMode('out'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}
+            title="Tap to switch to Booking Out Mode"
+          >
             Booking In Mode
+            <div style={{ fontWeight: 400, fontSize: '0.95rem', color: '#333', opacity: 0.7, marginTop: 2 }}>Tap to change</div>
           </div>
         ) : (
-          <div className="alert alert-warning text-center fw-bold py-3 mb-0" role="alert" style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px' }}>
+          <div
+            className="alert alert-warning text-center fw-bold py-3 mb-0"
+            role="alert"
+            style={{ borderRadius: 0, fontSize: '1.25rem', letterSpacing: '1px', cursor: 'pointer', userSelect: 'none' }}
+            onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}
+            title="Tap to switch to Booking In Mode"
+          >
             Booking Out Mode
+            <div style={{ fontWeight: 400, fontSize: '0.95rem', color: '#333', opacity: 0.7, marginTop: 2 }}>Tap to change</div>
           </div>
         )}
-      </div>
-
-      <div className="mb-3">
-        <button className={`btn btn-success me-2${mode === 'in' ? ' active' : ''}`} onClick={() => { setMode('in'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book In</button>
-        <button className={`btn btn-danger${mode === 'out' ? ' active' : ''}`} onClick={() => { setMode('out'); if (barcodeInputRef.current) barcodeInputRef.current.focus(); }}>Book Out</button>
       </div>
       <form id="barcode-form" onSubmit={handleBarcodeSubmit} className="mb-4 row justify-content-center g-2 align-items-center">
         <div className="col-auto">
