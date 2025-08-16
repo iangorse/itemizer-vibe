@@ -331,6 +331,38 @@ function InventoryPage({
           </table>
         </div>
       )}
+      {lookupResult.barcode && lookupResult.found && (
+        <div className="modal d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.35)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 2000 }}>
+          <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: 340, margin: 'auto' }}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Product Found</h5>
+                <button type="button" className="btn-close" aria-label="Close" onClick={() => setLookupResult({})}></button>
+              </div>
+              <div className="modal-body">
+                <p><strong>Name:</strong> {lookupResult.name}</p>
+                {lookupResult.brand && <p><strong>Brand:</strong> {lookupResult.brand}</p>}
+                <p><strong>Barcode:</strong> {lookupResult.barcode}</p>
+                {lookupResult.ingredients && <p><strong>Ingredients:</strong> {lookupResult.ingredients}</p>}
+                <p>This product was found via Open Food Facts. You can auto-fill the lookup form with this data.</p>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-success btn-sm" onClick={() => {
+                  setLookupBarcode(lookupResult.barcode);
+                  setTimeout(() => {
+                    navigate('/lookup');
+                  }, 0);
+                  localStorage.setItem('lookupNamePrefill', lookupResult.name);
+                  setLookupResult({});
+                }}>
+                  Auto-Fill Lookup Form
+                </button>
+                <button className="btn btn-secondary btn-sm" onClick={() => setLookupResult({})}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
