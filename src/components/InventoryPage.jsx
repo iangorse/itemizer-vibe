@@ -140,7 +140,7 @@ function InventoryPage({
             </div>
           </>
         )}
-        <div className="col-auto">
+        <div className="col-auto" style={{ marginTop: '1.2rem' }}>
           <button
             type="button"
             className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
