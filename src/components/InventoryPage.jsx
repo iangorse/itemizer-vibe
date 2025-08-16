@@ -279,12 +279,6 @@ function InventoryPage({
                         <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 2px', fontSize: '0.88em', whiteSpace: 'nowrap' }} onClick={() => handleLookupBarcode(barcode)} disabled={loadingBarcode === barcode}>
                           {loadingBarcode === barcode ? 'Looking up...' : 'Lookup'}
                         </button>
-                        <button className="btn btn-outline-primary btn-sm" style={{ minWidth: 0, padding: '2px 1px', fontSize: '0.82em', whiteSpace: 'nowrap' }} onClick={() => {
-                          setLookupBarcode(barcode);
-                          navigate('/lookup');
-                        }}>
-                          Add
-                        </button>
                         {lookupResult.barcode === barcode && lookupResult.found && (
                           <div className="modal d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.35)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 2000 }}>
                             <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: 340, margin: 'auto' }}>
@@ -297,6 +291,7 @@ function InventoryPage({
                                   <p><strong>Name:</strong> {lookupResult.name}</p>
                                   {lookupResult.brand && <p><strong>Brand:</strong> {lookupResult.brand}</p>}
                                   <p><strong>Barcode:</strong> {lookupResult.barcode}</p>
+                                  {lookupResult.ingredients && <p><strong>Ingredients:</strong> {lookupResult.ingredients}</p>}
                                   <p>This product was found via Open Food Facts. You can auto-fill the lookup form with this data.</p>
                                 </div>
                                 <div className="modal-footer">
